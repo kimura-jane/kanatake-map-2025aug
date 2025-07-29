@@ -1,4 +1,4 @@
-<!-- ===== index.html ===== -->
+<!-- ===== index.html（リストを左上固定に変更） ===== -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -16,19 +16,23 @@
     html,body{height:100%;margin:0;font-family:"Yomogi",sans-serif;}
     #map{height:100%;width:100%;}
 
-    /* ─── 右下固定リスト ─── */
+    /* ─── 番号付き地名リスト（左上固定） ─── */
     #list{
-      position:fixed;right:8px;bottom:8px;top:auto;
-      max-width:60vw;max-height:60vh;overflow-y:auto;
+      position:fixed;        /* ビューポートに固定 */
+      left:8px; top:8px;     /* ← 左上へ配置 */
+      right:auto; bottom:auto;
+      max-width:60vw; max-height:60vh; overflow-y:auto;
+
       background:rgba(255,255,255,.9);
       padding:8px 12px;border-radius:8px;
       box-shadow:0 0 6px rgba(0,0,0,.25);
-      line-height:1.4;font-size:14px;z-index:1001;
+      line-height:1.4;font-size:14px;
+      z-index:1001;          /* Leaflet より前面に */
     }
     #list div{cursor:pointer;margin-bottom:4px;}
     #list div:hover{background:#f0f0f0;}
 
-    /* 番号付きおにぎりアイコン */
+    /* 番号入りおにぎりアイコン */
     .numWrap{position:relative;width:48px;height:48px;}
     .numWrap img{width:48px;height:48px;}
     .numWrap span{
@@ -74,7 +78,10 @@
     function makeIcon(n){
       return L.divIcon({
         html:`<div class="numWrap"><img src="icon.png"><span>${n}</span></div>`,
-        className:'',iconSize:[48,48],iconAnchor:[24,24],popupAnchor:[0,-24]
+        className:'',
+        iconSize:[48,48],
+        iconAnchor:[24,24],
+        popupAnchor:[0,-24]
       });
     }
 
