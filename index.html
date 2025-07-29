@@ -1,4 +1,4 @@
-<!-- ===== index.html（リストを左上固定に変更） ===== -->
+<!-- ===== index.html（リストを右下に＆サイズ縮小） ===== -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -16,20 +16,23 @@
     html,body{height:100%;margin:0;font-family:"Yomogi",sans-serif;}
     #map{height:100%;width:100%;}
 
-    /* ─── 番号付き地名リスト（左上固定） ─── */
+    /* ─── 番号付き地名リスト：右下・小さめ ─── */
     #list{
-      position:fixed;        /* ビューポートに固定 */
-      left:8px; top:8px;     /* ← 左上へ配置 */
-      right:auto; bottom:auto;
-      max-width:60vw; max-height:60vh; overflow-y:auto;
+      position:fixed; right:8px; bottom:8px; top:auto; left:auto;
+      max-width:30vw;           /* 横幅を約半分に */
+      max-height:40vh;          /* 高さも圧縮 */
+      overflow-y:auto;
 
       background:rgba(255,255,255,.9);
-      padding:8px 12px;border-radius:8px;
+      padding:4px 8px;          /* 余白を半分に */
+      border-radius:8px;
       box-shadow:0 0 6px rgba(0,0,0,.25);
-      line-height:1.4;font-size:14px;
-      z-index:1001;          /* Leaflet より前面に */
+
+      font-size:11px;           /* フォント小さめ */
+      line-height:1.2;
+      z-index:1001;
     }
-    #list div{cursor:pointer;margin-bottom:4px;}
+    #list div{cursor:pointer;margin-bottom:2px;}
     #list div:hover{background:#f0f0f0;}
 
     /* 番号入りおにぎりアイコン */
@@ -85,7 +88,7 @@
       });
     }
 
-    /* ── マーカー＋サイドリスト ── */
+    /* ── マーカー＋リスト ── */
     const list=document.getElementById('list');
     spots.forEach((s,i)=>{
       const m=L.marker([s.lat,s.lon],{icon:makeIcon(i+1)}).addTo(map);
