@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<title>おにぎり屋 かなたけ 2025年8月マップ</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+html,body{height:100%;margin:0;}
+#map{height:100%;width:100%;}
+#list{position:absolute;right:8px;top:8px;background:rgba(255,255,255,.9);padding:8px 12px;border-radius:8px;font-family:sans-serif;font-size:14px;max-width:200px;max-height:90%;overflow-y:auto;box-shadow:0 0 6px rgba(0,0,0,.2);}
+#list div{cursor:pointer;margin-bottom:4px;}
+#list div:hover{background:#f0f0f0;}
+.numWrap{position:relative;width:48px;height:48px;}
+.numWrap img{width:48px;height:48px;}
+.numWrap span{position:absolute;top:2px;left:0;width:48px;text-align:center;font-weight:bold;font-size:18px;color:#fff;text-shadow:0 0 2px #000;}
+</style></head><body>
+<div id="map"></div><div id="list"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="spots.js"></script>
+<script>
+const map=L.map('map',{zoomControl:false}).setView([35.8,139.8],8);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:18,attribution:'&copy;OpenStreetMap &copy;CARTO'}).addTo(map);
+function makeIcon(n){return L.divIcon({html:`<div class="numWrap"><img src="icon.png"><span>${n}</span></div>`,className:'',iconSize:[48,48],iconAnchor:[24,24]});}
+const list=document.getElementById('list');
+spots.forEach((s,i)=>{const m=L.marker([s.lat,s.lon],{icon:makeIcon(i+1)}).addTo(map);
+m.bindPopup(`<strong>${s.place}</strong><br>${s.date}${s.time?' '+s.time:''}<br><a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank">Googleマップで開く</a>`);
+const row=document.createElement('div');row.textContent=`${i+1}. ${s.place}`;row.onclick=()=>{map.setView([s.lat,s.lon],11);m.openPopup();};list.appendChild(row);});
+</script></body></html>
