@@ -8,7 +8,7 @@
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-  <!-- 手書き風フォント（Google Fonts – Yomogi） -->
+  <!-- 手書き風フォント -->
   <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
 
   <style>
@@ -16,14 +16,20 @@
 
     #map{height:100%;width:100%;}
 
-    /* 右側の番号付き地名リスト */
+    /* 右側の番号付き地名リスト ― 常に表示 */
     #list{
-      position:absolute;right:8px;top:8px;
-      max-width:200px;max-height:90%;overflow-y:auto;
+      position:fixed;           /* ← 固定 */
+      right:8px; top:8px;
+      max-width:60vw;           /* スマホで横に広がり過ぎないよう制限 */
+      max-height:90vh;          /* 画面高の 90% 以内でスクロール */
+      overflow-y:auto;
+
       background:rgba(255,255,255,.9);
       padding:8px 12px;border-radius:8px;
       box-shadow:0 0 6px rgba(0,0,0,.2);
       line-height:1.4;font-size:14px;
+
+      z-index:1001;             /* Leaflet の Popup (600) や Control (800) より上 */
     }
     #list div{cursor:pointer;margin-bottom:4px;}
     #list div:hover{background:#f0f0f0;}
@@ -33,11 +39,10 @@
     .numWrap img{width:48px;height:48px;}
     .numWrap span{
       position:absolute;top:2px;left:0;width:48px;text-align:center;
-      font-weight:bold;font-size:18px;color:#fff;
-      text-shadow:0 0 2px #000;
+      font-weight:bold;font-size:18px;color:#fff;text-shadow:0 0 2px #000;
     }
 
-    /* ポップアップ：角丸＋やわらかい背景色 */
+    /* ポップアップ：角丸＋淡色背景 */
     .leaflet-popup-content-wrapper{
       border-radius:12px;background:#fff8f0;
       box-shadow:0 2px 6px rgba(0,0,0,.25);
@@ -53,9 +58,8 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="spots.js"></script>
   <script>
-    /* ▼ ベースマップ：CartoDB Voyager ‒ Pastelトーン -------------------- */
+    /* ▼ ベースマップ：CartoDB Voyager – Pastel -------------------- */
     const map = L.map('map',{zoomControl:false}).setView([35.8,139.8],8);
-
     L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
       {
@@ -71,31 +75,25 @@
     /* ▼ 番号入りおにぎりアイコン -------------------- */
     function makeIcon(num){
       return L.divIcon({
-        html:
-          `<div class="numWrap">
-             <img src="icon.png"><span>${num}</span>
-           </div>`,
+        html:`<div class="numWrap"><img src="icon.png"><span>${num}</span></div>`,
         className:'',
         iconSize:[48,48],
-        iconAnchor:[24,24],    /* 画像中心 */
+        iconAnchor:[24,24],
         popupAnchor:[0,-24]
       });
     }
 
-    /* ▼ 番号付きリスト＆マーカー登録 -------------------- */
+    /* ▼ マーカーとリスト -------------------- */
     const list = document.getElementById('list');
 
     spots.forEach((s,i)=>{
-      /* マーカー */
       const marker = L.marker([s.lat,s.lon],{icon:makeIcon(i+1)}).addTo(map);
 
-      /* ポップアップ */
       const html =
         `<strong>${s.place}</strong><br>${s.date}${s.time?' '+s.time:''}<br>`+
         `<a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank">Googleマップで開く</a>`;
       marker.bindPopup(html);
 
-      /* 右側リスト */
       const row = document.createElement('div');
       row.textContent = (i+1)+'. '+s.place;
       row.onclick = () => { map.setView([s.lat,s.lon],11); marker.openPopup(); };
