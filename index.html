@@ -16,12 +16,14 @@
 
     #map{height:100%;width:100%;}
 
-    /* 右側の番号付き地名リスト ― 常に表示 */
+    /* ───────── 右下固定の番号付き地名リスト ───────── */
     #list{
-      position:fixed;           /* ← 固定 */
-      right:8px; top:8px;
-      max-width:60vw;           /* スマホで横に広がり過ぎないよう制限 */
-      max-height:90vh;          /* 画面高の 90% 以内でスクロール */
+      position:fixed;           /* ビューポートに固定 */
+      right:8px; bottom:8px;    /* ← ここを bottom 固定に変更（top は auto） */
+      top:auto;
+
+      max-width:60vw;
+      max-height:60vh;          /* 底付きでも余裕を持たせる */
       overflow-y:auto;
 
       background:rgba(255,255,255,.9);
@@ -29,7 +31,7 @@
       box-shadow:0 0 6px rgba(0,0,0,.2);
       line-height:1.4;font-size:14px;
 
-      z-index:1001;             /* Leaflet の Popup (600) や Control (800) より上 */
+      z-index:1001;             /* Leaflet より前面 */
     }
     #list div{cursor:pointer;margin-bottom:4px;}
     #list div:hover{background:#f0f0f0;}
@@ -85,10 +87,8 @@
 
     /* ▼ マーカーとリスト -------------------- */
     const list = document.getElementById('list');
-
     spots.forEach((s,i)=>{
       const marker = L.marker([s.lat,s.lon],{icon:makeIcon(i+1)}).addTo(map);
-
       const html =
         `<strong>${s.place}</strong><br>${s.date}${s.time?' '+s.time:''}<br>`+
         `<a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank">Googleマップで開く</a>`;
