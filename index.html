@@ -1,3 +1,4 @@
+<!-- ===== index.html ===== -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -5,7 +6,7 @@
   <title>おにぎり屋 かなたけ｜2025 年 8 月マップ</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <!-- Leaflet -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
   <!-- 手書き風フォント -->
@@ -13,30 +14,21 @@
 
   <style>
     html,body{height:100%;margin:0;font-family:"Yomogi",sans-serif;}
-
     #map{height:100%;width:100%;}
 
-    /* ───────── 右下固定の番号付き地名リスト ───────── */
+    /* ─── 右下固定リスト ─── */
     #list{
-      position:fixed;           /* ビューポートに固定 */
-      right:8px; bottom:8px;    /* ← ここを bottom 固定に変更（top は auto） */
-      top:auto;
-
-      max-width:60vw;
-      max-height:60vh;          /* 底付きでも余裕を持たせる */
-      overflow-y:auto;
-
+      position:fixed;right:8px;bottom:8px;top:auto;
+      max-width:60vw;max-height:60vh;overflow-y:auto;
       background:rgba(255,255,255,.9);
       padding:8px 12px;border-radius:8px;
-      box-shadow:0 0 6px rgba(0,0,0,.2);
-      line-height:1.4;font-size:14px;
-
-      z-index:1001;             /* Leaflet より前面 */
+      box-shadow:0 0 6px rgba(0,0,0,.25);
+      line-height:1.4;font-size:14px;z-index:1001;
     }
     #list div{cursor:pointer;margin-bottom:4px;}
     #list div:hover{background:#f0f0f0;}
 
-    /* 番号入りおにぎりアイコン */
+    /* 番号付きおにぎりアイコン */
     .numWrap{position:relative;width:48px;height:48px;}
     .numWrap img{width:48px;height:48px;}
     .numWrap span{
@@ -44,7 +36,7 @@
       font-weight:bold;font-size:18px;color:#fff;text-shadow:0 0 2px #000;
     }
 
-    /* ポップアップ：角丸＋淡色背景 */
+    /* 角丸ポップアップ */
     .leaflet-popup-content-wrapper{
       border-radius:12px;background:#fff8f0;
       box-shadow:0 2px 6px rgba(0,0,0,.25);
@@ -57,10 +49,14 @@
   <div id="map"></div>
   <div id="list"></div>
 
+  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- 出店データ -->
   <script src="spots.js"></script>
+
   <script>
-    /* ▼ ベースマップ：CartoDB Voyager – Pastel -------------------- */
+    /* ── パステル調ベースマップ（CartoDB Voyager）── */
     const map = L.map('map',{zoomControl:false}).setView([35.8,139.8],8);
     L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
@@ -74,29 +70,25 @@
       }
     ).addTo(map);
 
-    /* ▼ 番号入りおにぎりアイコン -------------------- */
-    function makeIcon(num){
+    /* ── 番号入りアイコン ── */
+    function makeIcon(n){
       return L.divIcon({
-        html:`<div class="numWrap"><img src="icon.png"><span>${num}</span></div>`,
-        className:'',
-        iconSize:[48,48],
-        iconAnchor:[24,24],
-        popupAnchor:[0,-24]
+        html:`<div class="numWrap"><img src="icon.png"><span>${n}</span></div>`,
+        className:'',iconSize:[48,48],iconAnchor:[24,24],popupAnchor:[0,-24]
       });
     }
 
-    /* ▼ マーカーとリスト -------------------- */
-    const list = document.getElementById('list');
+    /* ── マーカー＋サイドリスト ── */
+    const list=document.getElementById('list');
     spots.forEach((s,i)=>{
-      const marker = L.marker([s.lat,s.lon],{icon:makeIcon(i+1)}).addTo(map);
-      const html =
+      const m=L.marker([s.lat,s.lon],{icon:makeIcon(i+1)}).addTo(map);
+      m.bindPopup(
         `<strong>${s.place}</strong><br>${s.date}${s.time?' '+s.time:''}<br>`+
-        `<a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank">Googleマップで開く</a>`;
-      marker.bindPopup(html);
-
-      const row = document.createElement('div');
-      row.textContent = (i+1)+'. '+s.place;
-      row.onclick = () => { map.setView([s.lat,s.lon],11); marker.openPopup(); };
+        `<a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank">Googleマップで開く</a>`
+      );
+      const row=document.createElement('div');
+      row.textContent=`${i+1}. ${s.place}`;
+      row.onclick=()=>{map.setView([s.lat,s.lon],11);m.openPopup();};
       list.appendChild(row);
     });
   </script>
