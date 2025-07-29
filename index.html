@@ -8,7 +8,7 @@
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-  <!-- 手書き風フォント（Google Fonts「Yomogi」）-->
+  <!-- 手書き風フォント（Google Fonts – Yomogi） -->
   <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
 
   <style>
@@ -20,18 +20,21 @@
     #list{
       position:absolute;right:8px;top:8px;
       max-width:200px;max-height:90%;overflow-y:auto;
-      background:rgba(255,255,255,.9);padding:8px 12px;border-radius:8px;
-      box-shadow:0 0 6px rgba(0,0,0,.2);line-height:1.4;font-size:14px;
+      background:rgba(255,255,255,.9);
+      padding:8px 12px;border-radius:8px;
+      box-shadow:0 0 6px rgba(0,0,0,.2);
+      line-height:1.4;font-size:14px;
     }
     #list div{cursor:pointer;margin-bottom:4px;}
     #list div:hover{background:#f0f0f0;}
 
-    /* 番号入りおにぎりアイコン用 */
+    /* 番号入りおにぎりアイコン */
     .numWrap{position:relative;width:48px;height:48px;}
     .numWrap img{width:48px;height:48px;}
     .numWrap span{
       position:absolute;top:2px;left:0;width:48px;text-align:center;
-      font-weight:bold;font-size:18px;color:#fff;text-shadow:0 0 2px #000;
+      font-weight:bold;font-size:18px;color:#fff;
+      text-shadow:0 0 2px #000;
     }
 
     /* ポップアップ：角丸＋やわらかい背景色 */
@@ -50,34 +53,36 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="spots.js"></script>
   <script>
-    /* ベースマップ：Stadia Alidade Smooth（パステル調）*/
+    /* ▼ ベースマップ：CartoDB Voyager ‒ Pastelトーン -------------------- */
     const map = L.map('map',{zoomControl:false}).setView([35.8,139.8],8);
+
     L.tileLayer(
-      'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+      'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
       {
-        maxZoom:18,
+        subdomains:'abcd',
+        maxZoom:19,
         attribution:
-          '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> ' +
+          '&copy; <a href="https://carto.com/">CARTO</a> ' +
           '&copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> ' +
           '&copy; <a href="https://openstreetmap.org/copyright">OSM</a>'
       }
     ).addTo(map);
 
-    /* 番号入りアイコン生成 */
+    /* ▼ 番号入りおにぎりアイコン -------------------- */
     function makeIcon(num){
       return L.divIcon({
         html:
           `<div class="numWrap">
              <img src="icon.png"><span>${num}</span>
            </div>`,
-        className:'',            /* デフォルトの空 class を無効化 */
+        className:'',
         iconSize:[48,48],
-        iconAnchor:[24,24],
+        iconAnchor:[24,24],    /* 画像中心 */
         popupAnchor:[0,-24]
       });
     }
 
-    /* サイドバーのリスト */
+    /* ▼ 番号付きリスト＆マーカー登録 -------------------- */
     const list = document.getElementById('list');
 
     spots.forEach((s,i)=>{
@@ -86,7 +91,7 @@
 
       /* ポップアップ */
       const html =
-        `<strong>${s.place}</strong><br>${s.date}${s.time? ' '+s.time:''}<br>`+
+        `<strong>${s.place}</strong><br>${s.date}${s.time?' '+s.time:''}<br>`+
         `<a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank">Googleマップで開く</a>`;
       marker.bindPopup(html);
 
